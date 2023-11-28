@@ -1,6 +1,8 @@
 package LibraryManagementSystem.enums;
 
-public enum BookGenre {
+import java.io.Serializable;
+
+public enum BookGenre implements Serializable {
     FANTASY("Fantasy"),
     SCIENCE_FICTION("Science Fiction"),
     PHILOSOPHY("Philosophy"),

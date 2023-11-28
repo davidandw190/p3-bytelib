@@ -1,6 +1,8 @@
 package LibraryManagementSystem.enums;
 
-public enum ResearchDomain {
+import java.io.Serializable;
+
+public enum ResearchDomain implements Serializable {
     SCIENCE("Science"),
     TECHNOLOGY("Technology"),
     ENGINEERING("Engineering"),
