@@ -49,33 +49,38 @@ public class Library implements Serializable {
         this.users = new ArrayList<>();
     }
 
-    public Library(String name, int bookReturnDeadline, double perDayFine) {
-        this.name = name;
-        this.bookReturnDeadline = bookReturnDeadline;
-        this.perDayFine = perDayFine;
-        this.librarian = new Librarian("admin", "123", "admin@email.com", "123456789");
-        this.booksCatalogue = new LinkedList<>();
-        this.scientificCatalogue = new LinkedList<>();
-        this.borrowRequests = new LinkedList<>();
-        this.users = new ArrayList<>();
-        initializeMockData();
+    public Library() {
+
     }
 
     public void saveData(String filePath, String format) {
-        try {
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(filePath));
-
-            if (format.equalsIgnoreCase("objectstream")) {
+        if (format.equalsIgnoreCase("objectstream")) {
+            try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(filePath))) {
                 saveToStream(objectOutputStream);
-            } else {
-                throw new IllegalArgumentException("Invalid format specified.");
+                System.out.println("[*] Library saved successfully to " + filePath);
+            } catch (IOException e) {
+                System.out.println("Error saving library to " + filePath + ": " + e.getMessage());
             }
-
-            objectOutputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } else {
+            throw new IllegalArgumentException("Invalid format specified.");
         }
     }
+
+//    public void saveData(String filePath, String format) {
+//        try {
+//            ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(filePath));
+//
+//            if (format.equalsIgnoreCase("objectstream")) {
+//                saveToStream(objectOutputStream);
+//            } else {
+//                throw new IllegalArgumentException("Invalid format specified.");
+//            }
+//
+//            objectOutputStream.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public void loadData(String filePath, String format) {
         try {
@@ -100,11 +105,11 @@ public class Library implements Serializable {
     private void loadFromStream(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException {
         Library library = (Library) objectInputStream.readObject();
 
-        // Update the static currentId fields for User and LibraryItem
+        // to update the static currentId fields for User and LibraryItem
         User.setCurrentIdNumber(library.getCurrentUserId());
         LibraryItem.setCurrentIdNumber(library.getCurrentLibraryItemId());
 
-        // Replace the current library with the loaded library
+        // to replace the current library with the loaded library
         this.name = library.getName();
         this.librarian = library.getLibrarian();
         this.users = library.getUsers();
@@ -244,13 +249,12 @@ public class Library implements Serializable {
                 .findFirst();
     }
 
+    public void populateLibraryWithMockValues() {
+        Borrower mockBorrower1 = new Borrower("user", "123", "borrower@email.com", "987654321");
+        Borrower mockBorrower2 = new Borrower("user2", "123", "mockuser@email.com", "987654321");
+        users.add(mockBorrower1);
+        users.add(mockBorrower1);
 
-    void initializeMockData() {
-        // Mock librarian and borrower
-        Borrower mockBorrower = new Borrower("user", "123", "borrower@email.com", "987654321");
-        users.add(mockBorrower);
-
-        // Mock books
         Book mockBook1 = new Novel("Mock Novel 1", "Mock Author", BookGenre.ASTRONOMY, 1, new Date());
         Book mockBook2 = new Textbook("Mock Textbook 1", "Mock Author", ResearchDomain.COMPUTER_SCIENCE, 2,  new Date());
         Book mockBook3 = new Novel("Mock Novel 2", "Mock Author", BookGenre.FANTASY, 2, new Date());
@@ -259,18 +263,51 @@ public class Library implements Serializable {
         booksCatalogue.add(mockBook1);
         booksCatalogue.add(mockBook2);
         booksCatalogue.add(mockBook3);
+        booksCatalogue.add(mockBook4);
 
         ArrayList<String> authors = new ArrayList<>();
         authors.add("author1");
         authors.add("author2");
 
         // Mock periodicals
-        Article mockArticle = new Article("Mock Article", new Date(), ResearchDomain.PHYSICS, 10, authors, "Publisher", "Abstract Text Here");
+        Article mockArticle = new Article("Mock Article", new Date(), ResearchDomain.PHYSICS, 32, authors, "Publisher", "Abstract Text Here");
         Journal mockJournal = new Journal("Mock Journal", new Date(), ResearchDomain.BIOLOGY, 12, PublishingIntervals.MONTHLY, "Publisher", 5, 3);
 
         scientificCatalogue.add(mockArticle);
         scientificCatalogue.add(mockJournal);
+
     }
+//
+//
+//    void initializeMockData() {
+//        // Mock librarian and borrower
+//        Borrower mockBorrower1 = new Borrower("user", "123", "borrower@email.com", "987654321");
+//        Borrower mockBorrower2 = new Borrower("user2", "123", "mockuser@email.com", "987654321");
+//        users.add(mockBorrower1);
+//        users.add(mockBorrower1);
+//
+//        // Mock books
+//        Book mockBook1 = new Novel("Mock Novel 1", "Mock Author", BookGenre.ASTRONOMY, 1, new Date());
+//        Book mockBook2 = new Textbook("Mock Textbook 1", "Mock Author", ResearchDomain.COMPUTER_SCIENCE, 2,  new Date());
+//        Book mockBook3 = new Novel("Mock Novel 2", "Mock Author", BookGenre.FANTASY, 2, new Date());
+//        Book mockBook4 = new Textbook("Mock Textbook 2", "Mock Author", ResearchDomain.COMPUTER_SCIENCE, 1,  new Date());
+//
+//        booksCatalogue.add(mockBook1);
+//        booksCatalogue.add(mockBook2);
+//        booksCatalogue.add(mockBook3);
+//        booksCatalogue.add(mockBook4);
+//
+//        ArrayList<String> authors = new ArrayList<>();
+//        authors.add("author1");
+//        authors.add("author2");
+//
+//        // Mock periodicals
+//        Article mockArticle = new Article("Mock Article", new Date(), ResearchDomain.PHYSICS, 32, authors, "Publisher", "Abstract Text Here");
+//        Journal mockJournal = new Journal("Mock Journal", new Date(), ResearchDomain.BIOLOGY, 12, PublishingIntervals.MONTHLY, "Publisher", 5, 3);
+//
+//        scientificCatalogue.add(mockArticle);
+//        scientificCatalogue.add(mockJournal);
+//    }
 
     public void addUser(Borrower user) {
         users.add(user);

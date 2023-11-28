@@ -47,18 +47,13 @@ public class LMS {
         String filePath = (args.length >= 2) ? args[1] : DEFAULT_FILE_PATH;
 
 
-        if (args.length >= 1) {
-            String action = args[0].toLowerCase();
-
-            if (action.equals("--persist") || action.equals("-p")) {
-                library = loadLibrary(filePath, scanner);
-            } else {
-                library = createLibraryWithMockData();
-                saveLibrary(library, filePath);
-            }
+        if (args.length >= 1 && (args[0].equals("--persist") || args[0].equals("-p"))) {
+            library = loadLibrary(filePath, scanner);
         } else {
-            library = createLibraryWithMockData();
+            library = initNewLibraryWithMockData(scanner);
+            saveLibrary(library, "lms.dat");
         }
+
 
         System.out.println("Welcome to " + library.getName() + " Library!");
 
@@ -87,77 +82,75 @@ public class LMS {
         }
     }
 
+
     private static Library loadLibrary(String filePath, Scanner scanner) {
         Library library = null;
 
         try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(filePath))) {
-            library = new Library("Default Library", 7, 0.5);  // Provide default values if necessary
+            library = new Library();  // Provide default values if necessary
             library.loadData(filePath, "objectstream");
-            System.out.println("Library loaded successfully from " + filePath);
+            System.out.println(" [*] Library loaded successfully from " + filePath);
         } catch (IOException e) {
             System.out.println("Error loading library from " + filePath + ": " + e.getMessage());
-            if (!filePath.equals(DEFAULT_FILE_PATH)) {
-                System.out.println("Initializing default library..");
-                waitForEnter(scanner);
-                library = createLibraryWithMockData();
-                saveLibrary(library, DEFAULT_FILE_PATH);
-            } else {
-                System.out.println("Exiting the Library Management System. Goodbye!");
-                System.exit(1);  // Exit the program if the default file fails to load
-            }
+
+            System.out.println("Initializing default library..");
+            waitForEnter(scanner);
+            library = initNewLibraryWithMockData(scanner);
+            saveLibrary(library, DEFAULT_FILE_PATH);
+
         }
 
         return library;
     }
 
-//    private static Library loadLibrary(String filePath, Scanner scanner) {
-//        Library library = null;
-//
-//        try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(filePath))) {
-//            library = new Library("Default Library", 7, 0.5);  // Provide default values if necessary
-//            library.loadData(filePath, "objectstream");
-//            System.out.println("Library loaded successfully from " + filePath);
-//        } catch (IOException e) {
-//            System.out.println("Error loading library from " + filePath + ": " + e.getMessage());
-//            if (!filePath.equals(DEFAULT_FILE_PATH)) {
-//                System.out.println("Initializing default library..");
-//                waitForEnter(scanner);
-//                library = createLibraryWithMockData();
-//                saveLibrary(library, DEFAULT_FILE_PATH);
-//            } else {
-//                System.out.println("Exiting the Library Management System. Goodbye!");
-//                System.exit(1);
-//            }
-//        }
-//
-//        return library;
-//    }
 
-//    private static Library loadLibrary(String filePath, Scanner scanner) {
-//        Library library;
-//
-//        File defaultFile = new File(DEFAULT_FILE_PATH);
-//
-//        if (defaultFile.exists()) {
-//            try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(DEFAULT_FILE_PATH))) {
-//                library = new Library("Default Library", 7, 0.5);  // Provide default values if necessary
-//                library.loadData(DEFAULT_FILE_PATH, "objectstream");
-//                System.out.println("Library loaded successfully from " + DEFAULT_FILE_PATH);
-//            } catch (IOException e) {
-//                System.out.println("Error loading library from " + DEFAULT_FILE_PATH + ": " + e.getMessage());
-//                System.out.println("Initializing default library..");
-//                waitForEnter(scanner);
-//                library = createLibraryWithMockData();
-//                saveLibrary(library, DEFAULT_FILE_PATH);
-//            }
-//        } else {
-//            // If the default file path doesn't exist, create a new library with mock data and save it
-//            library = createLibraryWithMockData();
-//            saveLibrary(library, DEFAULT_FILE_PATH);
-//        }
-//
-//        return library;
-//    }
+    private static Library initNewLibraryWithMockData(Scanner scanner) {
+        System.out.print("Enter the name of the new library: ");
+        String libraryName = scanner.nextLine();
+
+        System.out.print("Enter the book return deadline (in days): ");
+        int bookReturnDeadline = getIntegerInput(scanner);
+
+        System.out.print("Enter the per day fine for overdue books: ");
+        double perDayFine = getDoubleInput(scanner);
+
+        Librarian librarian = new Librarian("admin", "123", "admin@email.com", "123456789");
+
+        Library library = new Library(libraryName, librarian, bookReturnDeadline, perDayFine);
+        library.populateLibraryWithMockValues();
+
+        return library;
+    }
+
+    private static int getIntegerInput(Scanner scanner) {
+        int input = -1;
+        while (input < 0) {
+            try {
+                input = Integer.parseInt(scanner.nextLine());
+                if (input < 0) {
+                    System.out.print("Please enter a non-negative integer: ");
+                }
+            } catch (NumberFormatException ex) {
+                System.out.print("Invalid input. Please enter a valid integer: ");
+            }
+        }
+        return input;
+    }
+
+    private static double getDoubleInput(Scanner scanner) {
+        double input = -1;
+        while (input < 0) {
+            try {
+                input = Double.parseDouble(scanner.nextLine());
+                if (input < 0) {
+                    System.out.print("Please enter a non-negative number: ");
+                }
+            } catch (NumberFormatException ex) {
+                System.out.print("Invalid input. Please enter a valid number: ");
+            }
+        }
+        return input;
+    }
 
     private static void saveLibrary(Library library, String filePath) {
         try {
@@ -297,17 +290,16 @@ public class LMS {
         System.out.print("\nEnter your choice: ");
     }
 
-    private static Library createLibraryWithMockData() {
-        Librarian librarian = new Librarian("LibrarianName", "LibrarianPassword", "librarian@email.com", "123456789");
-        Library library = new Library("Mock Library", librarian, 14, 0.5);
-
-        Borrower mockUser = new Borrower("mockuser", "mockpass!123", "mockuser@email.com", "987654321");
-        library.addUser(mockUser);
-
-        library.initializeMockData();
-
-        return library;
-    }
+//    private static Library createLibraryWithMockData() {
+//        Librarian librarian = new Librarian("LibrarianName", "LibrarianPassword", "librarian@email.com", "123456789");
+//        Library library = new Library("Mock Library", librarian, 14, 0.5);
+//
+//        Borrower mockUser = new Borrower("mockuser", "mockpass!123", "mockuser@email.com", "987654321");
+//        library.addUser(mockUser);
+//
+//
+//        return library;
+//    }
 
     private static void librarianMenu(Library library, Scanner scanner) {
         while (true) {
@@ -576,11 +568,6 @@ public class LMS {
                 return item.isAvailable() ? "AVAILABLE" : "UNAVAILABLE";
             case "pub date":
                 return formatDate(item.getPublicationDate());
-            case "cover type":
-                if (item instanceof Book) {
-                    return ((Book) item).getCoverType().toString();
-                }
-                break;
             case "description":
                 if (item instanceof Book) {
                     return ((Book) item).getDescription();
