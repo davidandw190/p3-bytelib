@@ -3,8 +3,8 @@ package LibraryManagementSystem.items.books;
 import LibraryManagementSystem.enums.ResearchDomain;
 import LibraryManagementSystem.items.Borrowable;
 import LibraryManagementSystem.items.Citeable;
-import LibraryManagementSystem.users.User;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
@@ -12,15 +12,14 @@ public class Textbook extends Book implements Borrowable, Citeable {
 
     protected int edition;
     protected ResearchDomain topic;
+    protected long numberOfCitations;
 
-    public Textbook(String title, String author, Date pubDate) {
-        super(title, author, pubDate);
-    }
 
     public Textbook(String title, String author, ResearchDomain topic, int edition, Date pubDate) {
         super(title, author, pubDate);
         this.edition = edition;
         this.topic = topic;
+        this.numberOfCitations = 0;
     }
 
     @Override
@@ -35,17 +34,28 @@ public class Textbook extends Book implements Borrowable, Citeable {
 
     @Override
     public String getCitation() {
-        return this.author + ". \"" + title + ".\" ed. " + this.edition + ", " + this.topic + " Topic. " + this.publicationDate + ".";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        String formattedPubDate = dateFormat.format(publicationDate);
+
+        StringBuilder citationBuilder = new StringBuilder();
+        citationBuilder.append(getAuthor())
+                .append(". \"").append(getTitle()).append(".\" ")
+                .append("Edition ").append(getEdition()).append(". ")
+                .append("Published on ").append(formattedPubDate).append(". ")
+                .append("Research Domain: ").append(getTopic()).append(". ")
+                .append(getNumberOfCitations()).append(" citations.");
+
+        return citationBuilder.toString();
     }
 
     @Override
     public void cite() {
-        // TODO
+        this.setNumberOfCitations(this.getNumberOfCitations()+1);
     }
 
     @Override
     public long getNumberOfCitations() {
-        return 0;
+        return this.numberOfCitations;
     }
 
     @Override
@@ -77,5 +87,9 @@ public class Textbook extends Book implements Borrowable, Citeable {
 
     public void setTopic(ResearchDomain topic) {
         this.topic = topic;
+    }
+
+    public void setNumberOfCitations(long numberOfCitations) {
+        this.numberOfCitations = numberOfCitations;
     }
 }

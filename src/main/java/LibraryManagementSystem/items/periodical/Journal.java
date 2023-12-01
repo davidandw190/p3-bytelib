@@ -4,19 +4,20 @@ import LibraryManagementSystem.enums.ResearchDomain;
 import LibraryManagementSystem.enums.PublishingIntervals;
 import LibraryManagementSystem.items.Citeable;
 
-import java.util.Arrays;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
 public class Journal extends Periodical implements Citeable {
     private PublishingIntervals publishingInterval;
-    private String[] publishers;
+    private String publisher;
     private int volume;
     private int issue;
 
     public Journal(String title, Date pubDate, ResearchDomain domain, int numberOfCitations, PublishingIntervals publishingInterval, String publisher, int volume, int issue) {
         super(title, pubDate, domain, publisher, numberOfCitations);
         this.publishingInterval = publishingInterval;
+        this.publisher = publisher;
         this.volume = volume;
         this.issue = issue;
     }
@@ -24,11 +25,16 @@ public class Journal extends Periodical implements Citeable {
 
     @Override
     public String getCitation() {
-        return null;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy");
+        String pubDateStr = dateFormat.format(publicationDate);
+
+        return String.format("%s. \"%s.\" %d.%d (%s): %d citations.",
+                publisher, title, volume, issue, pubDateStr, getNumberOfCitations());
     }
 
     @Override
     public void cite() {
+        this.setNumberOfCitations(this.getNumberOfCitations() + 1);
 
     }
 
@@ -39,7 +45,7 @@ public class Journal extends Periodical implements Citeable {
         if (!super.equals(obj)) return false;
         Journal journal = (Journal) obj;
         return publishingInterval == journal.publishingInterval &&
-                Arrays.equals(publishers, journal.publishers) &&
+                publisher.equals(journal.publisher) &&
                 volume == journal.volume &&
                 issue == journal.issue;
     }
@@ -47,7 +53,7 @@ public class Journal extends Periodical implements Citeable {
     @Override
     public int hashCode() {
         int result = Objects.hash(super.hashCode(), publishingInterval, volume, issue);
-        result = 31 * result + Arrays.hashCode(publishers);
+        result = 31 * result + publisher.length();
         return result;
     }
 

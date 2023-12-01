@@ -3,6 +3,7 @@ package LibraryManagementSystem.items.periodical;
 import LibraryManagementSystem.enums.ResearchDomain;
 import LibraryManagementSystem.items.Citeable;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,11 +23,17 @@ public class Article extends Periodical implements Citeable {
 
     @Override
     public String getCitation() {
-        return null;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        String pubDateStr = dateFormat.format(publicationDate);
+
+        return String.format("%s. \"%s.\" (%s): %s %d citations.",
+                authorsToString(), getTitle(),
+                pubDateStr, getPublisher(), getNumberOfCitations());
     }
 
     @Override
     public void cite() {
+        this.setNumberOfCitations(this.getNumberOfCitations()+1);
     }
 
     @Override
@@ -59,5 +66,9 @@ public class Article extends Periodical implements Citeable {
 
     public void setAbstractText(String abstractText) {
         this.abstractText = abstractText;
+    }
+
+    private String authorsToString() {
+        return String.join(", ", authors);
     }
 }

@@ -44,17 +44,19 @@ public class LMS {
 
         Scanner scanner = new Scanner(System.in);
 
+        boolean persistenceEnabled = false;
+
         String filePath = (args.length >= 2) ? args[1] : DEFAULT_FILE_PATH;
 
 
         if (args.length >= 1 && (args[0].equals("--persist") || args[0].equals("-p"))) {
+            persistenceEnabled = true;
             library = loadLibrary(filePath, scanner);
         } else {
             library = initNewLibraryWithMockData(scanner);
-            saveLibrary(library, "lms.dat");
         }
 
-
+        clearScreen();
         System.out.println("Welcome to " + library.getName() + " Library!");
 
         while (true) {
@@ -74,7 +76,9 @@ public class LMS {
                     break;
                 case 4:
                     System.out.println("\nExiting the Library Management System. Goodbye!");
-                    saveLibrary(library, filePath);
+                    if (persistenceEnabled) {
+                        saveLibrary(library, filePath);
+                    }
                     System.exit(0);
                 default:
                     System.out.println("\nInvalid choice. Please try again.");
@@ -155,7 +159,6 @@ public class LMS {
     private static void saveLibrary(Library library, String filePath) {
         try {
             library.saveData(filePath, "objectstream");
-            System.out.println("Library saved successfully to " + filePath);
         } catch (Exception e) {
             System.out.println("Error saving library to " + filePath + ": " + e.getMessage());
         }
@@ -350,10 +353,11 @@ public class LMS {
             System.out.println("2. View Scientific Catalogue");
             System.out.println("3. Borrow Book");
             System.out.println("4. Return Book");
-            System.out.println("5. My Borrow Requests");
-            System.out.println("6. Logout");
+            System.out.println("5. Cite a Scientific Item");
+            System.out.println("6. My Borrow Requests");
+            System.out.println("7. Logout");
 
-            int choice = getChoice(scanner, 6);
+            int choice = getChoice(scanner, 7);
 
             switch (choice) {
                 case 1:
@@ -371,15 +375,56 @@ public class LMS {
                     returnBook(scanner, borrower);
                     break;
                 case 5:
+                    citeScientificItem(library, scanner);
+                    break;
+                case 6:
                     displayBorrowRequestsForUser(library, borrower);
                     waitForEnter(scanner);
                     break;
-                case 6:
+                case 7:
                     System.out.println("Logging out. Returning to the main menu.");
                     waitForEnter(scanner);
                     return;
             }
         }
+    }
+
+    private static void citeScientificItem(Library library, Scanner scanner) {
+        clearScreen();
+        System.out.println("Cite a Scientific Item:");
+
+        List<Citeable> citeableItems = new ArrayList<>();
+        citeableItems.addAll(library.getScientificCatalogue());
+        citeableItems.addAll(library.getCitableBooks());
+
+        if (citeableItems.isEmpty()) {
+            System.out.println("No items available for citation.");
+            waitForEnter(scanner);
+            return;
+        }
+
+        System.out.println("Available Items for Citation:");
+        for (int i = 0; i < citeableItems.size(); i++) {
+            if (citeableItems.get(i) instanceof Book) {
+                System.out.println((i + 1) + ". " + ((Book) citeableItems.get(i)).getTitle());
+            } else {
+                System.out.println((i + 1) + ". " + ((Periodical) citeableItems.get(i)).getTitle());
+            }
+
+        }
+
+        int choice = getChoice(scanner, citeableItems.size());
+
+        // Cite the selected item
+        Citeable selectedItem = citeableItems.get(choice - 1);
+        selectedItem.cite();
+
+        System.out.println("\nCitation recorded successfully!");
+        waitForEnter(scanner);
+
+        System.out.println("\nThe citation is: " + selectedItem.getCitation());
+
+        waitForEnter(scanner);
     }
 
     private static void returnBook(Scanner scanner, Borrower borrower) {
