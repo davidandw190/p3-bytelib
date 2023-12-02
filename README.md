@@ -1,7 +1,6 @@
 # ByteLib - Professional CLI Library Management System
 
-**ByteLib** is a sophisticated Java project that encompasses a command-line interface (CLI) library management system. It presents a comprehensive suite of features designed to meet the needs of both librarians and borrowers, offering efficient tools for managing library resources, procedures, and user interactions.
-
+**ByteLib** is a toy Java project that embodies a CLI library management system. . It offers a well rounded suite of features catering to both librarians and borrowers, providing efficient tools for managing library resources, procedures and user interactions.
 
 <img src="assets/bytelib-diagram.png" width="600" alt="Local Image">
 
@@ -17,7 +16,7 @@ The application features proper authentication and authorization prodcedures, al
     - Explore detailed information about the books and scientific items catalogues.
 
 - **Manage Item Inventory:**
-    - Librarians can seamlessly add new books or scientific items to the library and remove existing items.
+    - Add new books or scientific items to the library and remove existing items.
 
 - **View and Manage Borrow Requests and Keep Track of Borrowed Items:**
     - Monitor and manage borrow requests, keeping track of the requests made, the users that make the requests, books and their status, request date, and borrower information.
@@ -25,13 +24,13 @@ The application features proper authentication and authorization prodcedures, al
 ### 3. Borrower Features
 
 - **Browse Desired Catalogues:**
-    - Borrowers can effortlessly browse through the available books and scientific items catalogues.
+    - Borrowers can browse through the available books and scientific items catalogues.
 
 - **Borrow and Return Items:**
-    - Borrowers can initiate borrowing, return borrowed items, and access their comprehensive borrow history.
+    - Borrowers can initiate borrowing, return borrowed items, their status, and access their borrow history.
 
 - **Cite Scientific Items:**
-    - Borrowers can contribute to the scholarly landscape by citing scientific items, with the system diligently tracking the number of citations.
+    - Borrowers can cite scientific items, with the system tracking the number of citations.
 
 - **Account Management:**
     - Borrowers have the flexibility to create accounts, log in securely, and log out when needed. Robust password and account validation mechanisms ensure utmost security.
@@ -75,7 +74,7 @@ The application features proper authentication and authorization prodcedures, al
     - ByteLib provides intuitive and interactive menus for librarians and borrowers, guiding users through an array of available options.
 
 4. **Catalog Browsing:**
-    - Users can effortlessly navigate the library catalog, exploring available books and scientific items with ease.
+    - Users can easly navigate the library catalog, exploring available books and scientific items with ease.
 
 5. **Borrow and Return:**
     - Borrowers can seamlessly borrow and return items, while librarians efficiently manage these transactions.
