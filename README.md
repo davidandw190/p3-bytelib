@@ -1,4 +1,4 @@
-# ByteLib - Professional CLI Library Management System
+# ByteLib - CLI Library Management System
 
 **ByteLib** is a toy Java project that embodies a CLI library management system. . It offers a well rounded suite of features catering to both librarians and borrowers, providing efficient tools for managing library resources, procedures and user interactions.
 
@@ -8,7 +8,7 @@
 
 ### 1. Multi-User Model
 
-The application features proper authentication and authorization prodcedures, allowing for management of multiple accounts of multiple type. This way, librarians gain efficient tools for resource management, while borrowers enjoy a user-friendly interface for browsing, borrowing, and contributing to scholarly endeavors.
+The application features authentication and authorization prodcedures, allowing for management of multiple accounts of multiple type. This way, librarians gain efficient tools for resource management, while borrowers enjoy a user-friendly interface for browsing, borrowing, and contributing to scholarly endeavors.
 
 ### 2. Librarian Features
 
